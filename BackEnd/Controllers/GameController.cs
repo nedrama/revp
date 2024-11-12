@@ -18,10 +18,12 @@ namespace BackEnd.Controllers
     {
 
         private readonly RevDbContext _context;
+        private ResponseModel<Game> response;
         public GameController(RevDbContext context)
         {
             _context = context;
-            
+            response = new ResponseModel<Game>();
+
         }
         protected User? getCurrentUser()
         {
@@ -52,9 +54,11 @@ namespace BackEnd.Controllers
                 var games = _context.Games.ToList().FindAll(x => x.IsDeleted == false);
                 return Ok(games);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
         [HttpGet("api/User/{userId}/[controller]")]
@@ -65,14 +69,18 @@ namespace BackEnd.Controllers
                 var user = _context.Users.ToList().Find(x => x.Id == userId);
                 if (user == null || user.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false;
+                    response.Message = "No such user";
+                    return BadRequest(response);
                 }
                 var games = _context.Games.ToList().FindAll(x => x.UserId == userId && x.IsDeleted == false);
                 return Ok(games);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
 
@@ -84,11 +92,15 @@ namespace BackEnd.Controllers
             {
                 var game = _context.Games.ToList().Find(x => x.Id == id);
                 if (game == null || game.IsDeleted) return NotFound();
-                return Ok(game);
+                response.IsSuccess = true;
+                response.Data = game;
+                return Ok(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message=ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
         [HttpGet("api/User/{userId}/[controller]/{id}")]
@@ -99,15 +111,21 @@ namespace BackEnd.Controllers
                 var user = _context.Users.ToList().Find(x => x.Id == userId);
                 if (user == null || user.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false;
+                    response.Message = "No such user";
+                    return BadRequest(response);
                 }
                 var game = _context.Games.ToList().Find(x => x.Id == id && userId == x.UserId);
                 if (game == null || game.IsDeleted) return NotFound();
-                return Ok(game);
+                response.IsSuccess = true;
+                response.Data = game;
+                return Ok(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message=ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
 
@@ -129,9 +147,11 @@ namespace BackEnd.Controllers
                  _context.SaveChanges();
                  return Created($"/api/Game/{model.Id}", model);
             }
-            catch
+            catch (Exception ex) 
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -166,11 +186,15 @@ namespace BackEnd.Controllers
 
                 _context.SaveChanges();
 
-                return Ok(game); // Return 200 OK if the update is successful, optionally you can return the updated problem
+                response.IsSuccess = true;
+                response.Data = game;
+                return Ok(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -199,12 +223,15 @@ namespace BackEnd.Controllers
 
                 game.IsDeleted = true;
                 _context.SaveChanges();
-
-                return Ok(game);
+                response.IsSuccess = true;
+                response.Data = game;
+                return Ok(response);
             }
-            catch
+            catch (Exception ex) 
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
         [Authorize]
@@ -231,9 +258,11 @@ namespace BackEnd.Controllers
                 _context.SaveChanges();
                 return NoContent();
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
     }

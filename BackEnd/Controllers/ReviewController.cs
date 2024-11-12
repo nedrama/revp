@@ -16,9 +16,11 @@ namespace BackEnd.Controllers
     {
 
         private readonly RevDbContext _context;
+        private ResponseModel<Review> response;
         public ReviewController(RevDbContext context)
         {
             _context = context;
+            response = new ResponseModel<Review>();
         }
         protected User? getCurrentUser()
         {
@@ -48,9 +50,12 @@ namespace BackEnd.Controllers
                 var reviews = _context.Reviews.ToList().FindAll(x => x.IsDeleted == false);
                 return Ok(reviews);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
 
@@ -67,9 +72,11 @@ namespace BackEnd.Controllers
                 var reviews = _context.Reviews.ToList().FindAll(x => x.GameId == gameId && x.IsDeleted == false);
                 return Ok(reviews);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
         [HttpGet("api/User/{userId}/[controller]")]
@@ -80,14 +87,18 @@ namespace BackEnd.Controllers
                 var user = _context.Users.ToList().Find(x => x.Id == userId);
                 if (user == null || user.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false ;
+                    response.Message = "No such user";
+                    return BadRequest(response);
                 }
                 var reviews = _context.Reviews.ToList().FindAll(x => x.UserId == userId && x.IsDeleted == false);
                 return Ok(reviews);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
         [HttpGet("api/User/{userId}/Game/{gameId}/[controller]")]
@@ -98,19 +109,25 @@ namespace BackEnd.Controllers
                 var user = _context.Users.ToList().Find(x => x.Id == userId);
                 if (user == null || user.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false ;
+                    response.Message = "No such user";
+                    return BadRequest(response);
                 }
                 var game = _context.Games.ToList().Find(x => x.UserId == userId && x.Id == gameId);
                 if(game == null || game.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false ;
+                    response.Message = "User does not have such game";
+                    return BadRequest(response);
                 }
                 var reviews = _context.Reviews.ToList().FindAll(x => x.GameId == game.Id);
                 return Ok(reviews);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
 
@@ -122,11 +139,15 @@ namespace BackEnd.Controllers
             {
                 var review = _context.Reviews.ToList().Find(x => x.Id == id);
                 if (review == null || review.IsDeleted) return NotFound();
-                return Ok(review);
+                response.IsSuccess = true;
+                response.Data = review;
+                return Ok(response);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message= ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -138,15 +159,21 @@ namespace BackEnd.Controllers
                 var game = _context.Games.ToList().Find(x => x.Id == gameId);
                 if (game == null || game.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false;
+                    response.Message = "No such game";
+                    return BadRequest(response);
                 }
                 var review = _context.Reviews.ToList().Find(x => x.Id == id && x.GameId == gameId);
                 if (review == null || review.IsDeleted) return NotFound();
-                return Ok(review);
+                response.IsSuccess = true;
+                response.Data = review;
+                return Ok(response);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
         [HttpGet("api/User/{userId}/[controller]/{id}")]
@@ -157,15 +184,21 @@ namespace BackEnd.Controllers
                 var user = _context.Users.ToList().Find(x => x.Id == userId);
                 if (user == null || user.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false;
+                    response.Message = "No such user";
+                    return BadRequest(response);
                 }
                 var review = _context.Reviews.ToList().Find(x => x.Id == id && x.UserId == userId);
                 if (review == null || review.IsDeleted) return NotFound();
-                return Ok(review);
+                response.IsSuccess = true;
+                response.Data = review;
+                return Ok(response);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
         [HttpGet("api/User/{userId}/Game/{gameId}/[controller]/{id}")]
@@ -176,22 +209,30 @@ namespace BackEnd.Controllers
                 var user = _context.Users.ToList().Find(x => x.Id == userId);
                 if (user == null || user.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false;
+                    response.Message = "No such user";
+                    return BadRequest(response);
                 }
                 var game = _context.Games.ToList().Find(x => x.UserId == userId && x.Id == gameId);
 
                 if (game == null || game.IsDeleted)
                 {
-                    return BadRequest();
+                    response.IsSuccess = false;
+                    response.Message = "This user does not have such game";
+                    return BadRequest(response);
                 }
                 var review = _context.Reviews.ToList().Find(x => x.Id == id && x.GameId == game.Id);
 
                 if (review == null || review.IsDeleted) return NotFound();
-                return Ok(review);
+                response.IsSuccess = true;
+                response.Data = review;
+                return Ok(response);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -212,9 +253,11 @@ namespace BackEnd.Controllers
                 _context.SaveChanges();
                 return Created($"/api/Review/{model.Id}", model);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -250,11 +293,15 @@ namespace BackEnd.Controllers
 
                 _context.SaveChanges();
 
-                return Ok(review); // Return 200 OK if the update is successful, optionally you can return the updated problem
+                response.IsSuccess = true;
+                response.Data = review;
+                return Ok(response);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest(); // Return 500 Internal Server Error if an exception occurs
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -283,11 +330,15 @@ namespace BackEnd.Controllers
                 review.IsDeleted = true;
                 _context.SaveChanges();
 
-                return Ok(review); 
+                response.IsSuccess = true;
+                response.Data = review;
+                return Ok(response);
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest(); 
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response); 
             }
         }
         [Authorize]
@@ -314,9 +365,11 @@ namespace BackEnd.Controllers
                 _context.SaveChanges();
                 return NoContent();
             }
-            catch 
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message =ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
     }

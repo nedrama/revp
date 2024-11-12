@@ -56,7 +56,7 @@ namespace BackEnd.helpers
                 if (loginUser == null || !BCrypt.Net.BCrypt.Verify(login.Password, loginUser.Password))
                 {
                     response.IsSuccess = false;
-                    response.Message = "Invalid Username Or Password";
+                    response.Message = "No such user";
                     return response;
                 }
 
@@ -77,7 +77,7 @@ namespace BackEnd.helpers
             catch (Exception ex) 
             {
                 response.IsSuccess = false;
-                response.Message = ex.Message;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
                 return response;
             }
         }
@@ -113,9 +113,9 @@ namespace BackEnd.helpers
                     return response;
 
             }
-            catch
+            catch (Exception ex) 
             {
-                response.Message = "Something went wrong!";
+                response.Message = response.Message = ExceptionMessage.exeptionMessage(ex);
                 response.IsSuccess = false;
                 return response;
             }
@@ -162,7 +162,7 @@ namespace BackEnd.helpers
                 authenticationResult.Success = true;
                 return authenticationResult;
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }
@@ -185,12 +185,13 @@ namespace BackEnd.helpers
                 refreshTokenModel.Token = authResponse.Token;
                 refreshTokenModel.RefreshToken = authResponse.RefreshToken;
                 response.Data = refreshTokenModel;
+                response.IsSuccess = true;
                 return response;
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.Message = "Something went wrong!";
+                response.Message = response.Message = ExceptionMessage.exeptionMessage(ex);
                 return response;
             }
         }
@@ -291,5 +292,6 @@ namespace BackEnd.helpers
             }
             return user.Role;
         }
+        
     }
 }

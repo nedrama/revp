@@ -17,9 +17,12 @@ namespace BackEnd.Controllers
     public class UserController : ControllerBase
     {
         private readonly RevDbContext _context;
+        private ResponseModel<User> response;
         public UserController(RevDbContext context)
         {
             _context = context;
+            response = new ResponseModel<User>();
+
         }
         protected User? getCurrentUser()
         {
@@ -49,9 +52,11 @@ namespace BackEnd.Controllers
                 var users = _context.Users.ToList().FindAll(x => x.IsDeleted == false);
                 return Ok(users);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -63,11 +68,15 @@ namespace BackEnd.Controllers
             {
                 var user = _context.Users.ToList().Find(x => x.Id == id);
                 if (user == null || user.IsDeleted) return NotFound();
-                return Ok(user);
+                response.IsSuccess = true;
+                response.Data = user;
+                return Ok(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -92,9 +101,11 @@ namespace BackEnd.Controllers
                 _context.SaveChanges();
                 return Created($"/api/User/{model.Id}", model);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -134,11 +145,15 @@ namespace BackEnd.Controllers
 
                 _context.SaveChanges();
 
-                return Ok(user); // Return 200 OK if the update is successful, optionally you can return the updated problem
+                response.IsSuccess = true;
+                response.Data = user;
+                return Ok(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.IsSuccess = false;
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                return BadRequest(response);
             }
         }
 
@@ -168,11 +183,15 @@ namespace BackEnd.Controllers
                 user.IsDeleted = true;
                 _context.SaveChanges();
 
-                return Ok(user);
+                response.IsSuccess = true;
+                response.Data = user;
+                return Ok(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
         [Authorize]
@@ -199,9 +218,11 @@ namespace BackEnd.Controllers
                 _context.SaveChanges();
                 return NoContent();
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                response.Message = ExceptionMessage.exeptionMessage(ex);
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
     }

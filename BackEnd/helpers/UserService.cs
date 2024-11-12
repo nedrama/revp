@@ -41,6 +41,7 @@ namespace BackEnd.helpers
                 if (user != null)
                 {
                     response.Data = user;
+                    response.IsSuccess = true;
                     return response;
                 }
                 else
@@ -52,7 +53,9 @@ namespace BackEnd.helpers
             }
             catch (Exception ex)
             {
-                throw ex;
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
             }
         }
     }

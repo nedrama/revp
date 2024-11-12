@@ -1,4 +1,5 @@
 ﻿using BackEnd.helpers;
+using BackEnd.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -29,7 +30,7 @@ namespace BackEnd.Controllers
             {
                 return Created($"/api/User/{result.Data.Id}", result.Data);
             }
-            return BadRequest();
+            return BadRequest(result);
         }
 
         [Route("login")]
@@ -41,14 +42,21 @@ namespace BackEnd.Controllers
             {
                 return Ok(result.Data);
             }
-            return BadRequest();
+            return BadRequest(result);
         }
         [Route("refresh")]
         [HttpPost]
         public async Task<IActionResult> Refresh([FromBody] TokenModel request)
         {
             var result = await _identityService.RefreshTokenAsync(request);
-            return Ok(result);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else {
+                return BadRequest(result);
+            }
+            
         }
 
         [Route("getCurrentUser")]
@@ -56,17 +64,14 @@ namespace BackEnd.Controllers
         [Authorize]
         public IActionResult GetCurrentUser()
         {
+
             int UserId = GetUserIdFromToken();
-            if (UserId == 0)
-            {
-                return BadRequest();
-            }
-            if (UserId == -1)
-            {
-                return NotFound();
-            }
             var result = _userService.Get(UserId);
-            return Ok(result);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         protected int GetUserIdFromToken()
@@ -74,7 +79,6 @@ namespace BackEnd.Controllers
             int UserId = 0;
             try
             {
-                if (HttpContext.User.Identity == null) { return -1; }
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var identity = HttpContext.User.Identity as ClaimsIdentity;
