@@ -40,7 +40,7 @@ namespace BackEnd.Controllers
             var result = await _identityService.LoginAsync(loginModel);
             if (result.IsSuccess)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
             return BadRequest(result);
         }

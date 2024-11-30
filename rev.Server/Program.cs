@@ -19,10 +19,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DBConnection");
-builder.Services.AddDbContext<RevDbContext>(option =>
+try
 {
-    option.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-});
+    builder.Services.AddDbContext<RevDbContext>(option =>
+    {
+        option.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    });
+}
+catch(Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
 
 var provider = builder.Services.BuildServiceProvider();
 var configuration = provider.GetService<IConfiguration>();

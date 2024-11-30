@@ -1,16 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from "react-toastify";
 
 
-function LoginPage() {
+interface Game {
+    title: string,
+    description: string
+}
+function addGame() {
     const navigate = useNavigate();
-    const [userName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const [game, setGame] = useState<Game>();
 
     function handleSubmit(event: React.FormEvent<EventTarget>) {
         event.preventDefault();
@@ -24,26 +23,20 @@ function LoginPage() {
         axios
             .post("api/Auth/Login", loginPayload)
             .then((response) => {
-               const token = response.data.data.token;
-               localStorage.setItem("token", token);
+                const token = response.data.token;
+
+                localStorage.setItem("token", token);
 
                 if (token) {
-                        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                        navigate("/");
+                    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
                 }
-                else {
-                     toast.error("Failed to login")
-                }
+
+                navigate("/");
             })
-            .catch((err) => {
-                console.log(err.response.data.message);
-                toast.error(err.response.data.message);
-            }
-            );
+            .catch((err) => console.log(err));
     }
 
     function handleUserNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-        //setUserName(event.target.value);
         setUserName(event.target.value);
     }
     function handleUserEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -55,7 +48,6 @@ function LoginPage() {
     }
 
     return (
-        <><ToastContainer />
         <div>
             Login Page
             <form onSubmit={handleSubmit}>
@@ -73,9 +65,8 @@ function LoginPage() {
                 </label>
                 <input type="submit" value="Submit" />
             </form>
-            </div>
-        </>
+        </div>
     );
 }
 
-export default LoginPage;
+export default addGame;

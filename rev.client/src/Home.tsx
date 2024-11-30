@@ -1,15 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-
-interface User {
-    id: number,
-    username: string,
-    email: string,
-    isCompany: boolean
-}
+import { UserInterface } from "./assets/interfaces";
+import { toast } from "sonner";
 
 function HomePage() {
-    const [data, setData] = useState<User>();
+    const [data, setData] = useState<UserInterface>();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -25,11 +20,11 @@ function HomePage() {
                     const data = response.data;
                     setData(data.data);
                 })
-                .catch((err) => console.log(err));
+                .catch((err) => toast.error(err));
         }
     });
 
-    return <div>Home Page {data === undefined ? "default": data.id} </div>;
+    return <div>Home Page {data === undefined ? "Guest": "User: " + data.username} </div>;
 }
 
 export default HomePage;

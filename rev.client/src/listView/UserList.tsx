@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
-import './App.css';
-
-interface User {
-    id: number,
-    username: string,
-    email: string,
-    isCompany: boolean
-}
+import '../App.css';
+import { Link } from 'react-router-dom';
+import { UserInterface } from '../assets/interfaces';
+import { toast } from 'sonner';
 
 function UserList() {
-    const [User, setUser] = useState<User[]>();
+    const [User, setUser] = useState<UserInterface[]>();
 
     useEffect(() => {
-        populateUserData();
+        populateUserData().catch((err) => {
+            console.error(err.response.data.message)
+            toast.error(err.response.data.message)
+        });
     }, []);
 
     const contents = User === undefined
@@ -28,10 +27,12 @@ function UserList() {
             <tbody>
                 {User.map(user =>
                     <tr key={user.id}>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
-                        <td>{user.isCompany ? "Company" : "User"}</td>
-                    </tr>
+                        <Link to={`/users/${user.id}`}>
+                            <td>{user.username}</td>
+                            <td>{user.email}</td>
+                            <td>{user.isCompany ? "Company" : "User"}</td>
+                        </Link>
+                        </tr>
                 )}
             </tbody>
         </table>;
