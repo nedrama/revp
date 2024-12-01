@@ -1,72 +1,68 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
 
 
-interface Game {
-    title: string,
-    description: string
-}
-function addGame() {
+function AddGame() {
     const navigate = useNavigate();
-    const [game, setGame] = useState<Game>();
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
 
     function handleSubmit(event: React.FormEvent<EventTarget>) {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        }
         event.preventDefault();
 
-        const loginPayload = {
-            userName: userName,
-            password: password,
-            email: email
+        const gameInfo = {
+            title: title,
+            description: description
         };
 
         axios
-            .post("api/Auth/Login", loginPayload)
+            .post("api/Game", gameInfo)
             .then((response) => {
-                const token = response.data.token;
-
-                localStorage.setItem("token", token);
-
-                if (token) {
-                    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                }
-
-                navigate("/");
+                toast.message(response.data);
+                navigate("/games");
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                console.log(err.response.data.message);
+                toast.error(err.response.data.message);
+            }
+            );
     }
 
-    function handleUserNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setUserName(event.target.value);
+    function handleTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        //setUserName(event.target.value);
+        setTitle(event.target.value);
     }
-    function handleUserEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setEmail(event.target.value);
-    }
-
-    function handlePasswordhange(event: React.ChangeEvent<HTMLInputElement>) {
-        setPassword(event.target.value);
+    function handleDescriptionChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setDescription(event.target.value);
     }
 
     return (
-        <div>
-            Login Page
-            <form onSubmit={handleSubmit}>
-                <label>
-                    User Name:
-                    <input type="text" value={userName} onChange={handleUserNameChange} />
-                </label>
-                <label>
-                    E-mail:
-                    <input type="text" value={email} onChange={handleUserEmailChange} />
-                </label>
-                <label>
-                    Password:
-                    <input type="text" value={password} onChange={handlePasswordhange} />
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
-        </div>
+        <><ToastContainer />
+            <div>
+                New Game
+                <form onSubmit={handleSubmit}>
+                    <label>
+                        Title:
+                        <input type="text" value={title} onChange={handleTitleChange} />
+                    </label>
+                    <label>
+                        Description:
+                        <input type="text" value={description} onChange={handleDescriptionChange} />
+                    </label>
+                    <input type="submit" value="Submit" />
+                </form>
+            </div>
+        </>
     );
 }
 
-export default addGame;
+export default AddGame;

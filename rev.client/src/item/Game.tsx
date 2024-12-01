@@ -25,7 +25,7 @@ const Game = () => {
     useEffect(() => {
         if (game) {
             populateReviewData(game.id).catch((err) => {
-                console.error(err.response.data.message)
+                console.log(err)
                 toast.error(err.response.data.message)
             });
         }
@@ -34,6 +34,7 @@ const Game = () => {
     return (
         <>{gameData(game)}
             {reviewData()}
+            <Link to={`/games/${id}/newReview`}><td>Add Raview</td></Link>
         </>
 
     )
