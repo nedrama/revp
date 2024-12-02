@@ -287,9 +287,6 @@ namespace BackEnd.Controllers
                 // Update the properties of existingProblem with the values from the updatedProblem
                 review.Comment = updatedReview.Comment;
                 review.Rating = updatedReview.Rating;
-                review.IsDeleted= updatedReview.IsDeleted;
-                review.GameId = updatedReview.GameId;
-                review.Game = updatedReview.Game;
 
                 _context.SaveChanges();
 

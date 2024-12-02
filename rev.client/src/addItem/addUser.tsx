@@ -11,7 +11,7 @@ function AddUser() {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState("User");
     const [isCompany, setCompany] = useState(false);
 
     function handleSubmit(event: React.FormEvent<EventTarget>) {

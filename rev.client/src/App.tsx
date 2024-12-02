@@ -11,9 +11,12 @@ import GameList from "./listView/GameList"
 import Header from "./header";
 import Game from "./item/Game";
 import User from "./item/User";
-import AddUser from "./addItem/addUser";
-import AddGame from "./addItem/addGame";
+import AddUser from "./addItem/AddUser";
+import AddGame from "./addItem/AddGame";
 import AddReview from "./addItem/AddReview";
+import EditUser from "./editItem/EditUser";
+import EditGame from "./editItem/EditGame";
+import EditReview from "./editItem/EditReview";
 
 export default function App() {
     return (
@@ -30,6 +33,9 @@ export default function App() {
                     <Route path="/newUser" element={<AddUser />} />
                     <Route path="/newGame" element={<AddGame />} />
                     <Route path="/games/:id/newReview" element={<AddReview />} />
+                    <Route path="/games/:id/edit" element={<EditGame />} />
+                    <Route path="/users/:id/edit" element={<EditUser />} />
+                    <Route path="/reviews/:id/edit" element={<EditReview />} />
                 </Routes>
             </BrowserRouter>
         </div>

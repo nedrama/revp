@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import '../App.css';
 import { Link } from 'react-router-dom';
 import { GameInterface, UserInterface } from "../assets/interfaces";
-import { toast } from 'sonner';
+//import { toast } from 'sonner';
 
 function GameList() {
     const [Game, setGame] = useState<GameInterface[]>();
@@ -10,12 +10,12 @@ function GameList() {
 
     useEffect(() => {
         populateUserData().catch((err) => {
-            console.error(err.response.data.message)
-            toast.error(err.response.data.message)
+            console.error(err)
+            //toast.error(err.response.data.message)
         });
         populateGameData().catch((err) => {
-            console.error(err.response.data.message)
-            toast.error(err.response.data.message)
+            console.error(err)
+            //toast.error(err.response.data.message)
         });
     }, []);
 

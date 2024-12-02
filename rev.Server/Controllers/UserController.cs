@@ -134,7 +134,7 @@ namespace BackEnd.Controllers
 
                 // Update the properties of existingProblem with the values from the updatedProblem
                 user.Username = updatedUser.Username;
-                user.Password = BCrypt.Net.BCrypt.HashPassword(updatedUser.Password);
+                //user.Password = BCrypt.Net.BCrypt.HashPassword(updatedUser.Password);
                 user.Email = updatedUser.Email;
                 user.IsDeleted = updatedUser.IsDeleted;
                 if (currentUser.Role == roles.Admin)

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -6,13 +6,36 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
 import { Rating } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
+import { ReviewInterface } from "../assets/interfaces";
 
 
-function AddReview() {
+function EditReview() {
     const navigate = useNavigate();
     const [comment, setComment] = useState("");
     const [rating, setRating] = useState(0);
+    const [gameId, setId] = useState(0);
     const { id } = useParams();
+
+    const [review, setReview] = useState<ReviewInterface>();
+
+    useEffect(() => {
+        async function fetchData() {
+            getReview(Number(id)).then(
+            ).catch((err) => {
+                console.error(err.response)
+                //toast.error(err.response.data.message)
+            });
+        }
+        fetchData();
+    }, [id]);
+
+    useEffect(() => {
+        if (review) {
+            setComment(review.comment);
+            setRating(review.rating);
+            setId(review.gameId);
+        }
+    }, [review]);
 
     function handleSubmit(event: React.FormEvent<EventTarget>) {
         const token = localStorage.getItem("token");
@@ -24,15 +47,14 @@ function AddReview() {
 
         const reviewInfo = {
             comment: comment,
-            rating: rating,
-            gameId: id
+            rating: rating
         };
 
         axios
-            .post("../../api/Review", reviewInfo)
+            .put(`../../api/Review/${id}`, reviewInfo)
             .then((response) => {
                 toast.message(response.data);
-                navigate(`/games/${id}`);
+                navigate(`/games/${gameId}`);
             })
             .catch((err) => {
                 console.log(err.response.data);
@@ -44,6 +66,12 @@ function AddReview() {
     function handleCommentChange(event: React.ChangeEvent<HTMLInputElement>) {
         //setUserName(event.target.value);
         setComment(event.target.value);
+    }
+
+    async function getReview(id: number) {
+        const response = await fetch(`../../api/Review/${id}`);
+        const data = await response.json();
+        setReview(data.data);
     }
 
     return (
@@ -77,4 +105,4 @@ function AddReview() {
     );
 }
 
-export default AddReview;
+export default EditReview;
