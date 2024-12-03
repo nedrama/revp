@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import '../App.css';
 import { Link } from 'react-router-dom';
 import { UserInterface } from '../assets/interfaces';
-import { toast } from 'sonner';
+//import { toast } from 'sonner';
 
 function UserList() {
     const [User, setUser] = useState<UserInterface[]>();
 
     useEffect(() => {
         populateUserData().catch((err) => {
-            console.error(err.response.data.message)
-            toast.error(err.response.data.message)
+            console.error(err.response)
+            //toast.error(err.response.data.message)
         });
     }, []);
 

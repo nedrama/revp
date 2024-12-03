@@ -48,7 +48,7 @@ function Register() {
     return (
         <><ToastContainer />
             <div>
-                Login Page
+                Register Page
                 <form onSubmit={handleSubmit}>
                     <label>
                         User Name:

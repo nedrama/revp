@@ -6,6 +6,9 @@
     "@mui/material": "^6.1.9",
     "flowbite": "^2.5.2",
     "flowbite-react": "^0.10.2",
+    "react-icons": "^5.4.0",
+    "react-responsive": "^10.0.0",
+    "react-router-dom": "^6.28.0",
     "tailwind": "^4.0.0"
   },
   "devDependencies": {
