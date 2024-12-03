@@ -5,7 +5,57 @@
     text-align: center;
 }*/
 
-th, td {
+/*th, td {
     padding-left: 1rem;
     padding-right: 1rem;
+}*/
+
+/*.footer {
+    background-color: blue;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-height: 200px;
+}*/
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+#container {
+    min-height: 100%;
+    position: relative;
+}
+
+#header {
+    background: #ff0;
+    padding: 10px;
+}
+
+#content {
+    padding: 10px;
+    padding-bottom: 60px; /* Height of the footer */
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px; /* Height of the footer */
+    background: #6cf;
+    align-content: center;
+    align-items: center;
+}
+
+img {
+    max-height: 50px;
+    max-width: 50px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
 }

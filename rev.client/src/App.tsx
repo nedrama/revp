@@ -17,6 +17,8 @@ import AddReview from "./addItem/AddReview";
 import EditUser from "./editItem/EditUser";
 import EditGame from "./editItem/EditGame";
 import EditReview from "./editItem/EditReview";
+import Register from "./login/Register";
+import { FooterComponent } from "./Footer";
 
 export default function App() {
     return (
@@ -26,6 +28,7 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/users" element={<UserList />} />
                     <Route path="/games" element={<GameList />} />
                     <Route path="/games/:id" element={<Game />} />
@@ -38,6 +41,7 @@ export default function App() {
                     <Route path="/reviews/:id/edit" element={<EditReview />} />
                 </Routes>
             </BrowserRouter>
+            <FooterComponent />
         </div>
     );
 }

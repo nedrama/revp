@@ -88,14 +88,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add("X-Content-Type-Options", new StringValues("nosniff"));
-    context.Response.Headers.Add("X-Frame-Options", new StringValues("SAMEORIGIN"));
-    context.Response.Headers.Add("X-XSS-Protection", new StringValues("1; mode=block"));
-    await next();
-});
-
 app.UseCors();
 
 app.UseRouting();

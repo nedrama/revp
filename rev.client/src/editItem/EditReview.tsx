@@ -87,11 +87,11 @@ function EditReview() {
                         <Rating
                             value={rating}
                             precision={1}
-                            onChange={(event, value) => {
+                            onChange={(_event, value) => {
                                 if(value)
                                 setRating(value);
                             }}
-                            onChangeActive={(event, value) => {
+                            onChangeActive={(_event, value) => {
                                 if(value)
                                 setRating(rating);
                             }}

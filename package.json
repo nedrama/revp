@@ -3,6 +3,14 @@
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.9",
-    "@mui/material": "^6.1.9"
+    "@mui/material": "^6.1.9",
+    "flowbite": "^2.5.2",
+    "flowbite-react": "^0.10.2",
+    "tailwind": "^4.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15"
   }
 }
