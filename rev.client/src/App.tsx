@@ -1,10 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import "./App.css";
 
 //pages
 
-import HomePage from "./Home";
 import LoginPage from "./login/login";
 import UserList from "./listView/UserList"
 import GameList from "./listView/GameList"
@@ -19,15 +18,19 @@ import EditGame from "./editItem/EditGame";
 import EditReview from "./editItem/EditReview";
 import Register from "./login/Register";
 import FooterComponent from "./Footer";
+import { Box } from '@mui/material';
+import { NotificationProvider } from './assets/NotificationContext';
 
 export default function App() {
     return (
         <div>
             
             <BrowserRouter>
+                <NotificationProvider>
                 <Header />
+                <Box className="pageContainer">
                 <Routes>
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={<Navigate to="/games" />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/users" element={<UserList />} />
@@ -40,9 +43,12 @@ export default function App() {
                     <Route path="/games/:id/edit" element={<EditGame />} />
                     <Route path="/users/:id/edit" element={<EditUser />} />
                     <Route path="/reviews/:id/edit" element={<EditReview />} />
-                </Routes>
+                    </Routes>
+                    
+                    </Box>
+                </NotificationProvider>
             </BrowserRouter>
-                <FooterComponent />
+            <FooterComponent />
             
         </div>
     );

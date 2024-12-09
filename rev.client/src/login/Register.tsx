@@ -1,9 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from "react-toastify";
+import { Container, Box, Typography, TextField, Button, Alert, AlertColor, Snackbar } from "@mui/material";
 
 
 function Register() {
@@ -11,6 +10,16 @@ function Register() {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [open, setOpen] = useState(false);
+    const [severity, setSeverity] = useState<AlertColor>('success');
+    const [message, setMessage] = useState('');
+
+    const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
 
     function handleSubmit(event: React.FormEvent<EventTarget>) {
         event.preventDefault();
@@ -23,13 +32,28 @@ function Register() {
 
         axios
             .post("api/Auth/Register", loginPayload)
-            .then((response) => {
-                toast.message(response.data);
+            .then(() => {
+                setSeverity('success');
+                setMessage("Registered");
+                setOpen(true);
                 navigate('/login');
             })
             .catch((err) => {
-                console.log(err.response.data.message);
-                toast.error(err.response.data.message);
+                try {
+                    if (err.response.data.message) {
+                        setSeverity('error');
+                        setMessage(err.response.data.message);
+                        setOpen(true);
+                    }
+                    else {
+                        setSeverity('error');
+                        setMessage(err.response.data.errors.Title[0]);
+                        setOpen(true);
+                    }
+                }
+                catch (errr) {
+                    console.log(errr);
+                }
             });
     }
 
@@ -46,26 +70,65 @@ function Register() {
     }
 
     return (
-        <><ToastContainer />
-            <div>
-                Register Page
-                <form onSubmit={handleSubmit}>
-                    <label>
-                        User Name:
-                        <input type="text" value={userName} onChange={handleUserNameChange} />
-                    </label>
-                    <label>
-                        E-mail:
-                        <input type="text" value={email} onChange={handleUserEmailChange} />
-                    </label>
-                    <label>
-                        Password:
-                        <input type="text" value={password} onChange={handlePasswordhange} />
-                    </label>
-                    <input type="submit" value="Submit" />
-                </form>
-            </div>
-        </>
+        <Container component="main">
+            <Snackbar
+                open={open}
+                autoHideDuration={3000} // Set duration to 3000ms (3 seconds)
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} // Position the Snackbar at the bottom center
+            >
+                <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+                    {message}
+                </Alert>
+            </Snackbar>
+            <Box className="logReg">
+                <Typography component="h1" variant="h5">
+                    Register
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} noValidate>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="Username"
+                        autoFocus
+                        value={userName}
+                        onChange={handleUserNameChange}
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        value={email}
+                        onChange={handleUserEmailChange}
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={handlePasswordhange}
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                    >
+                        Register
+                    </Button>
+                </Box>
+            </Box>
+        </Container>
     );
 }
 

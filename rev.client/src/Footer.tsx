@@ -1,26 +1,16 @@
 ﻿
-import { Box, Container, Typography } from "@mui/material";
-import { styled } from "@mui/system";
-
-const StyledFooter = styled(Box)(() => ({
-    backgroundColor: "#1a237e",
-    color: "#ffffff",
-    padding: "16px 0",
-    position: "fixed",
-    bottom: 0,
-    width: "100%",
-    zIndex: 1000
-}));
+import { Container, Typography } from "@mui/material";
 
 const FooterComponent = () => {
     return (
-        <StyledFooter className="footer" role="contentinfo">
+        <footer id="footer" role="contentinfo">
             <Container maxWidth="lg">
+                <a href="https://www.vecteezy.com/free-vector/logo">Logo Vectors by Vecteezy</a>
                 <Typography variant="body2" align="center">
                     © {new Date().getFullYear()} Rev. All rights reserved.
                 </Typography>
             </Container>
-        </StyledFooter>
+            </footer>
     );
 };
 

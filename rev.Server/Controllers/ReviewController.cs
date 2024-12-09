@@ -12,22 +12,17 @@ namespace BackEnd.Controllers
 {
     [Route("/")]
     [ApiController]
-    public class ReviewController : ControllerBase
+    public class ReviewController(RevDbContext context) : ControllerBase
     {
 
-        private readonly RevDbContext _context;
-        private ResponseModel<Review> response;
-        public ReviewController(RevDbContext context)
-        {
-            _context = context;
-            response = new ResponseModel<Review>();
-        }
+        private readonly RevDbContext _context = context;
+        private readonly ResponseModel<Review> response = new ();
+
         protected User? getCurrentUser()
         {
             if (HttpContext != null && HttpContext.User != null && HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
             {
-                var identity = HttpContext.User.Identity as ClaimsIdentity;
-                if (identity != null)
+                if (HttpContext.User.Identity is ClaimsIdentity identity)
                 {
                     IEnumerable<Claim> claims = identity.Claims;
                     string strUserId = identity.FindFirst("UserId").Value;
@@ -283,6 +278,7 @@ namespace BackEnd.Controllers
                 {
                     return Forbid();
                 }
+                review.UserId = user.Id;
 
                 // Update the properties of existingProblem with the values from the updatedProblem
                 review.Comment = updatedReview.Comment;

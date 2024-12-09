@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from "react-toastify";
 import { UserInterface } from "../assets/interfaces";
+import { Container, Box, Typography, TextField, InputLabel, Select, MenuItem, FormControlLabel, Checkbox, Button, SelectChangeEvent, Alert, AlertColor, Snackbar } from "@mui/material";
 
 
 
@@ -21,13 +20,22 @@ function EditUser() {
     const [role, setRole] = useState("User");
     const [password, setPassword] = useState("");
     const [isCompany, setCompany] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [severity, setSeverity] = useState<AlertColor>('success');
+    const [message, setMessage] = useState('');
+
+    const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
 
     useEffect(() => {
         async function fetchData() {
             getUser(Number(id)).then(
             ).catch((err) => {
-                console.error(err.response)
-                //toast.error(err.response.data.message)
+                console.log(err)
             });
         }
         fetchData();
@@ -65,12 +73,27 @@ function EditUser() {
             axios
                 .put(`../../api/User/${id}`, userInfo)
                 .then((response) => {
-                    toast.message(response.data);
+                    setSeverity('success');
+                    setMessage(response.data);
+                    setOpen(true);
                     navigate(`/users/${id}`);
                 })
                 .catch((err) => {
-                    console.log(err.response.data.message);
-                    toast.error(err.response.data.message);
+                    try {
+                        if (err.response.data.message) {
+                            setSeverity('error');
+                            setMessage(err.response.data.message);
+                            setOpen(true);
+                        }
+                        else {
+                            setSeverity('error');
+                            setMessage(err.response.data.errors.Title[0]);
+                            setOpen(true);
+                        }
+                    }
+                    catch (errr) {
+                        console.log(errr);
+                    }
                 }
                 );
         }
@@ -82,7 +105,7 @@ function EditUser() {
     function handleUserEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
         setEmail(event.target.value);
     }
-    function handleRoleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    function handleRoleChange(event: SelectChangeEvent) {
         setRole(event.target.value);
     }
     function handleCompanyChange() {
@@ -94,34 +117,80 @@ function EditUser() {
         setUser(data.data);
     }
 
+    function GetFields() {
+        const userRole = localStorage.getItem("userRole");
+        return (
+            <Box component="form" onSubmit={handleSubmit} noValidate>
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="username"
+                    label="Username"
+                    autoComplete="username"
+                    autoFocus
+                    value={userName}
+                    onChange={handleUserNameChange}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={handleUserEmailChange}
+                />
+                {userRole === "Admin" ?  
+                <><InputLabel>Role</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={role}
+                    label="Role"
+                    onChange={handleRoleChange}
+                    fullWidth
+                >
+                    <MenuItem value={"User"}>User</MenuItem>
+                    <MenuItem value={"Admin"}>Administrator</MenuItem>
+                        </Select>
+                        <FormControlLabel control={<Checkbox checked={isCompany} onChange={handleCompanyChange} />} label="Company" />
+                    </> : <></>}
+               
+                
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                >
+                    Submit
+                </Button>
+            </Box>
+        );
+        
+    }
+
     return (
-        <><ToastContainer />
-            <div>
-                New User
-                <form onSubmit={handleSubmit}>
-                    <label>
-                        User Name:
-                        <input type="text" value={userName} onChange={handleUserNameChange} />
-                    </label>
-                    <label>
-                        E-mail:
-                        <input type="text" value={email} onChange={handleUserEmailChange} />
-                    </label>
-                    <label>
-                        Role:
-                        <input type="" value={role} onChange={handleRoleChange} />
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={isCompany}
-                            onChange={handleCompanyChange} />
-                        Company
-                    </label>
-                    <input type="submit" value="Submit" />
-                </form>
-            </div>
-        </>
+        <Container component="main">
+            <Snackbar
+                open={open}
+                autoHideDuration={3000} // Set duration to 3000ms (3 seconds)
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} // Position the Snackbar at the bottom center
+            >
+                <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+                    {message}
+                </Alert>
+            </Snackbar>
+            <Box className="logReg">
+                <Typography component="h1" variant="h5">
+                    Edit User
+                </Typography>
+                {GetFields()}
+            </Box>
+        </Container>
     );
 }
 
